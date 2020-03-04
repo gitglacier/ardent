@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Hashing\BcryptHasher;
 use Illuminate\Support\MessageBag;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Model;
@@ -77,7 +77,7 @@ abstract class Ardent extends Model {
     public static $throwOnFind = false;
 
     /**
-     * If set to true, the object will automatically populate model attributes from Input::all()
+     * If set to true, the object will automatically populate model attributes from request()->all()
      *
      * @var bool
      */
@@ -572,7 +572,7 @@ abstract class Ardent extends Model {
 			$customAttributes = (empty($customAttributes))? static::$customAttributes : $customAttributes;
 
 			if ($this->forceEntityHydrationFromInput || (empty($this->attributes) && $this->autoHydrateEntityFromInput)) {
-				$this->fill(Input::all());
+				$this->fill(request()->all());
 			}
 
 			$data = $this->getAttributes(); // the data under validation
@@ -591,8 +591,8 @@ abstract class Ardent extends Model {
 				$this->validationErrors = $this->validator->messages();
 
 				// stash the input to the current session
-				if (!self::$external && Input::hasSession()) {
-					Input::flash();
+                                if (!self::$external && request()->hasSession()) {
+                                        request()->flash();
 				}
 			}
 		}
